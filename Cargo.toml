@@ -1,0 +1,17 @@
+[package]
+name = "path-traits"
+version = "0.1.0"
+edition = "2024"
+description = "Tower-like generic traits for parametric paths, segments, and geometric queries"
+authors = ["Markus Mayer <widemeadows@gmail.com>"]
+license = "EUPL-1.2 OR MIT OR Apache-2.0"
+repository = "https://github.com/sunsided/path-traits"
+categories = ["mathematics", "science::robotics", "no-std"]
+keywords = ["path", "curve", "geometry", "planning", "trait"]
+
+[features]
+default = ["std"]
+std     = []
+
+[dependencies]
+num-traits = { version = "0.2", default-features = false, features = ["libm"] }
