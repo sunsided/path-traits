@@ -4,7 +4,38 @@
 //! (`Debug`, `Copy`, `'static`) required for arc-length and parameter computations
 //! throughout the crate. The supertraits vary by feature configuration.
 
-#[cfg(feature = "num-traits")]
+#[cfg(all(feature = "num-traits", feature = "std"))]
+mod inner {
+    use num_traits::Float;
+
+    /// A scalar type suitable for arc-length, parameter, and distance computations.
+    ///
+    /// Requires `Float` from `num-traits` (with `std`) plus `Debug`, `Copy`, and `'static` bounds.
+    /// Implementations are provided automatically for any type satisfying those bounds
+    /// (e.g. `f32`, `f64`).
+    pub trait Scalar: Float + core::fmt::Debug + Copy + 'static {
+        /// Returns the additive identity (0.0).
+        fn zero() -> Self;
+        /// Returns the multiplicative identity (1.0).
+        fn one() -> Self;
+        /// Cast a `usize` value to this scalar type.
+        fn from_usize(n: usize) -> Self;
+    }
+
+    impl<T: Float + core::fmt::Debug + Copy + 'static> Scalar for T {
+        fn zero() -> Self {
+            T::zero()
+        }
+        fn one() -> Self {
+            T::one()
+        }
+        fn from_usize(n: usize) -> Self {
+            num_traits::NumCast::from(n).unwrap_or(Self::one())
+        }
+    }
+}
+
+#[cfg(all(feature = "num-traits", not(feature = "std")))]
 mod inner {
     use num_traits::float::FloatCore;
 

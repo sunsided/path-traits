@@ -19,11 +19,15 @@
 //!
 //! # Crate features
 //!
-//! - `std` (default) - enables `std`-specific integrations. The core traits work
-//!   without `std`; `core::error::Error` is available via Rust edition 2024.
-//! - `num-traits` (default) - enables `num-traits` as the scalar backend. When
-//!   disabled with `std`, manual `Scalar` impls for `f32`/`f64` are provided.
-//!   Disabling both `num-traits` and `std` is a compile error.
+//! - `std` — enables `std`-specific integrations. The core traits work without
+//!   `std`; `core::error::Error` is available via Rust edition 2024. When
+//!   combined with `num-traits`, forwards `std` to that crate for the full
+//!   `Float` trait (instead of `FloatCore`).
+//! - `num-traits` — uses `num-traits` as the [`Scalar`] backend. Without `std`,
+//!   [`Scalar`] is bounded by `FloatCore`; with `std`, it is bounded by `Float`.
+//!
+//! The default build is `no_std` with zero external dependencies, providing
+//! manual [`Scalar`] implementations for `f32` and `f64` using only `core`.
 //!
 //! # What's available
 //!
@@ -36,12 +40,6 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
-
-#[cfg(all(not(feature = "num-traits"), not(feature = "std")))]
-compile_error!(
-    "path-traits requires either `num-traits` or `std` feature. \
-     Enable `num-traits` (default), or enable `std` for manual f32/f64 impls."
-);
 
 mod differential;
 mod error;
