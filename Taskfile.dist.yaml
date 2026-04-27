@@ -71,11 +71,11 @@ tasks:
       - "{{.CARGO}} build"
 
   test:
-    desc: Test the crate with all features
+    desc: Test all four feature combinations
     cmds:
-      - task: test:all
       - task: test:default-features
-      - task: test:no-default-features
+      - task: test:std
+      - task: test:num-traits
       - task: test:std-num-traits
 
   test:all:
@@ -97,6 +97,16 @@ tasks:
     cmds:
       - "{{.CARGO}} test --no-default-features"
 
+  test:std:
+    desc: Test with std feature only (no num-traits)
+    cmds:
+      - "{{.CARGO}} test --no-default-features --features std"
+
+  test:num-traits:
+    desc: Test with num-traits only (no_std + FloatCore)
+    cmds:
+      - "{{.CARGO}} test --no-default-features --features num-traits"
+
   test:std-num-traits:
     desc: Test with std + num-traits
     cmds:
@@ -114,7 +124,8 @@ tasks:
       - lint:check
       - test
       - test:default-features
-      - test:no-default-features
+      - test:std
+      - test:num-traits
       - test:std-num-traits
 
   clean:
