@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  quality:
+    name: Format and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Check formatting
+        run: task -t Taskfile.dist.yaml fmt:check
+
+      - name: Run lint
+        run: task -t Taskfile.dist.yaml lint:check
+
+  tests:
+    name: Tests (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: all features
+            task: test
+          - name: default features
+            task: test:default-features
+          - name: no default features
+            task: test:no-default-features
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Run tests
+        run: task -t Taskfile.dist.yaml ${{ matrix.task }}

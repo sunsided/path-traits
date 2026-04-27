@@ -1,0 +1,91 @@
+version: "3"
+
+vars:
+  CARGO: cargo
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list-all
+
+  fmt:
+    desc: Apply Rust formatting
+    aliases:
+      - fmt:fix
+    cmds:
+      - "{{.CARGO}} fmt"
+
+  fmt:check:
+    desc: Check Rust formatting
+    cmds:
+      - "{{.CARGO}} fmt -- --check"
+
+  check:
+    desc: Check the crate with default features
+    cmds:
+      - "{{.CARGO}} check"
+
+  check:all-features:
+    desc: Check the crate with all features
+    cmds:
+      - "{{.CARGO}} check --all-features --all-targets"
+
+  check:no-default-features:
+    desc: Check the crate without default features
+    cmds:
+      - "{{.CARGO}} check --no-default-features"
+
+  lint:
+    desc: Check clippy lints for all targets and features
+    aliases:
+      - lint:check
+    cmds:
+      - "{{.CARGO}} clippy --all-features --all-targets"
+
+  lint:fix:
+    desc: Apply clippy fixes for all targets and features
+    aliases:
+      - clippy
+    cmds:
+      - "{{.CARGO}} clippy --fix --allow-dirty --all-features --all-targets"
+
+  build:
+    desc: Build the crate with default features
+    cmds:
+      - "{{.CARGO}} build"
+
+  test:
+    desc: Test the crate with all features
+    aliases:
+      - test:all
+    cmds:
+      - "{{.CARGO}} test --all-features"
+
+  test:default-features:
+    desc: Test the crate with default features
+    aliases:
+      - test:default
+    cmds:
+      - "{{.CARGO}} test"
+
+  test:no-default-features:
+    desc: Test the crate without default features
+    cmds:
+      - "{{.CARGO}} test --no-default-features"
+
+  verify:
+    desc: Run formatting checks, static checks, clippy, and the test matrix
+    deps:
+      - fmt:check
+      - check:all-features
+      - check:no-default-features
+      - lint:check
+      - test
+      - test:default-features
+      - test:no-default-features
+
+  clean:
+    desc: Remove Cargo build artifacts
+    cmds:
+      - "{{.CARGO}} clean"

@@ -42,7 +42,7 @@ pub use {
     transform::*,
 };
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::*;
 
@@ -146,7 +146,7 @@ mod tests {
 
     impl ParametricPath for LineSegment2 {
         fn sample_t(&self, t: Self::Scalar) -> Result<Self::Point, Self::Error> {
-            if t < 0.0 || t > 1.0 {
+            if !(0.0..=1.0).contains(&t) {
                 return Err(PathError::OutOfDomain);
             }
             Ok(Pt2(
@@ -283,7 +283,7 @@ mod tests {
             let dir = self.a.displacement(self.b);
             let to_p = self.a.displacement(p);
             let t = (to_p.dot(dir)) / (dir.dot(dir));
-            let t_clamped = t.max(0.0).min(1.0);
+            let t_clamped = t.clamp(0.0, 1.0);
             Ok(t_clamped * self.len)
         }
     }
