@@ -47,7 +47,7 @@ cargo add path-traits --features "std num-traits"
 - [`Project`] — closest-point projection onto a path.
 - [`PathExt`] + [`Reverse`], [`Concat`], [`Offset`] — composable path adapters.
 - Free helpers: [`equidistant`], [`n_samples`], [`uniform_t`].
-- [`PathError`] — canonical error enum (every `type Error` must be `From<PathError>`).
+- [`PathError`] — canonical error enum (every `type Error` must be `From<PathError<Self::Scalar>>`).
 
 [`Scalar`]: https://docs.rs/path-traits/latest/path_traits/trait.Scalar.html
 [`Point`]: https://docs.rs/path-traits/latest/path_traits/trait.Point.html
@@ -191,7 +191,7 @@ The [`Scalar`] trait is the numeric backbone of the crate. You typically **do no
 **Required associated types:**
 - `type Scalar: Scalar`
 - `type Point: Point<Scalar = Self::Scalar>`
-- `type Error: From<PathError>`
+- `type Error: From<PathError<Self::Scalar>>`
 
 **Required methods:**
 - `length(&self) -> Self::Scalar` — total arc-length.
@@ -201,8 +201,23 @@ The [`Scalar`] trait is the numeric backbone of the crate. You typically **do no
 
 **Invariants:**
 - `sample_at(0) == start()` and `sample_at(length()) == end()`.
-- Return `PathError::OutOfDomain` when `s ∉ [0, length]`.
+- Return `PathError::OutOfDomain { param, domain }` when `s ∉ [0, length]` — use the `PathError::out_of_domain(s, self.domain())` helper. Use `PathError::degenerate(reason)` for zero-length paths and `PathError::not_differentiable(s, reason)` for cusps.
 - `sample_at` should be arc-length-parameterized (constant speed). If it is not, also implement `ParametricPath` and override `t_to_s` / `s_to_t`.
+
+**Error context:** `PathError<S>` carries the offending parameter and valid domain so consumers can produce precise diagnostics:
+
+```rust
+use path_traits::{Path, PathError};
+
+fn handle_error<P: Path>(path: &P, result: Result<P::Point, P::Error>) {
+    if let Err(err) = result {
+        // Convert to PathError to inspect the payload
+        if let PathError::OutOfDomain { param, domain } = err.into() {
+            eprintln!("parameter {:?} is outside [{:?}, {:?}]", param, domain.start(), domain.end());
+        }
+    }
+}
+```
 
 ### ParametricPath
 
@@ -254,7 +269,7 @@ Note the same-type constraint: `Scalar`, `Point`, and `Error` must all match the
 **Required:**
 - `tangent_at(&self, s) -> Result<Vector, Self::Error>`
 
-The returned vector must be unit-length and point in the direction of increasing `s`. Use `PathError::Degenerate` for zero-length paths and `PathError::NotDifferentiable` for cusps.
+The returned vector must be unit-length and point in the direction of increasing `s`. Use `PathError::degenerate(reason)` for zero-length paths and `PathError::not_differentiable(s, reason)` for cusps.
 
 ### Heading
 
@@ -358,12 +373,12 @@ impl LineSegment2 {
 impl Path for LineSegment2 {
     type Scalar = f64;
     type Point = Pt2;
-    type Error = PathError;
+    type Error = PathError<f64>;
 
     fn length(&self) -> f64 { self.len }
 
-    fn sample_at(&self, s: f64) -> Result<Pt2, PathError> {
-        if s < 0.0 || s > self.len { return Err(PathError::OutOfDomain); }
+    fn sample_at(&self, s: f64) -> Result<Pt2, PathError<f64>> {
+        if s < 0.0 || s > self.len { return Err(PathError::out_of_domain(s, 0.0..=self.len)); }
         if self.len == 0.0 { return Ok(self.a); }
         let t = s / self.len;
         Ok(Pt2(

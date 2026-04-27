@@ -73,7 +73,7 @@ impl LineSegment2 {
 impl Path for LineSegment2 {
     type Scalar = f64;
     type Point = Pt2;
-    type Error = PathError;
+    type Error = PathError<f64>;
 
     fn length(&self) -> Self::Scalar {
         self.len
@@ -81,7 +81,7 @@ impl Path for LineSegment2 {
 
     fn sample_at(&self, s: Self::Scalar) -> Result<Self::Point, Self::Error> {
         if s < 0.0 || s > self.len {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(s, self.domain()));
         }
         if self.len == 0.0 {
             return Ok(self.a);
@@ -99,7 +99,7 @@ impl PathSegment for LineSegment2 {}
 impl ParametricPath for LineSegment2 {
     fn sample_t(&self, t: Self::Scalar) -> Result<Self::Point, Self::Error> {
         if !(0.0..=1.0).contains(&t) {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(t, 0.0..=1.0));
         }
         Ok(Pt2(
             self.a.0 + t * (self.b.0 - self.a.0),
@@ -111,10 +111,10 @@ impl ParametricPath for LineSegment2 {
 impl Tangent for LineSegment2 {
     fn tangent_at(&self, s: Self::Scalar) -> Result<<Self::Point as Point>::Vector, Self::Error> {
         if s < 0.0 || s > self.len {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(s, self.domain()));
         }
         if self.len == 0.0 {
-            return Err(PathError::Degenerate);
+            return Err(PathError::degenerate("zero-length segment"));
         }
         let dir = self.a.displacement(self.b);
         Ok(dir * (1.0 / self.len))
@@ -124,10 +124,10 @@ impl Tangent for LineSegment2 {
 impl Heading for LineSegment2 {
     fn heading_at(&self, s: Self::Scalar) -> Result<Self::Scalar, Self::Error> {
         if s < 0.0 || s > self.len {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(s, self.domain()));
         }
         if self.len == 0.0 {
-            return Err(PathError::Degenerate);
+            return Err(PathError::degenerate("zero-length segment"));
         }
         let dir = self.a.displacement(self.b);
         Ok(dir.1.atan2(dir.0))
@@ -138,7 +138,7 @@ impl Curved for LineSegment2 {
     type Curvature = f64;
     fn curvature_at(&self, s: Self::Scalar) -> Result<Self::Curvature, Self::Error> {
         if s < 0.0 || s > self.len {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(s, self.domain()));
         }
         Ok(0.0)
     }
@@ -187,7 +187,7 @@ impl Polyline2 {
 impl Path for Polyline2 {
     type Scalar = f64;
     type Point = Pt2;
-    type Error = PathError;
+    type Error = PathError<f64>;
 
     fn length(&self) -> Self::Scalar {
         self.total_len
@@ -195,7 +195,7 @@ impl Path for Polyline2 {
 
     fn sample_at(&self, s: Self::Scalar) -> Result<Self::Point, Self::Error> {
         if s < 0.0 || s > self.total_len {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(s, self.domain()));
         }
         let (idx, local) = self.locate(s)?;
         self.segments[idx].sample_at(local)
@@ -215,7 +215,7 @@ impl SegmentedPath for Polyline2 {
 
     fn locate(&self, s: Self::Scalar) -> Result<(usize, Self::Scalar), Self::Error> {
         if s < 0.0 || s > self.total_len {
-            return Err(PathError::OutOfDomain);
+            return Err(PathError::out_of_domain(s, self.domain()));
         }
         let mut remaining = s;
         for (i, &seg_len) in self.seg_lengths.iter().enumerate() {
@@ -257,8 +257,14 @@ fn line_segment_sample_mid() {
 #[test]
 fn line_segment_out_of_domain() {
     let seg = LineSegment2::new(Pt2(0.0, 0.0), Pt2(1.0, 0.0));
-    assert_eq!(seg.sample_at(-0.1).unwrap_err(), PathError::OutOfDomain);
-    assert_eq!(seg.sample_at(1.1).unwrap_err(), PathError::OutOfDomain);
+    let err = seg.sample_at(-0.1).unwrap_err();
+    assert!(
+        matches!(err, PathError::OutOfDomain { param, domain } if (param - -0.1).abs() < 1e-10 && *domain.start() == 0.0 && (*domain.end() - 1.0).abs() < 1e-10)
+    );
+    let err = seg.sample_at(1.1).unwrap_err();
+    assert!(
+        matches!(err, PathError::OutOfDomain { param, domain } if (param - 1.1).abs() < 1e-10 && *domain.start() == 0.0 && (*domain.end() - 1.0).abs() < 1e-10)
+    );
 }
 
 #[test]

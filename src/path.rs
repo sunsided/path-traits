@@ -21,8 +21,8 @@ pub trait Path {
     type Scalar: Scalar;
     /// The point type representing positions on the path.
     type Point: Point<Scalar = Self::Scalar>;
-    /// The error type for fallible operations. Must be convertible from [`PathError`].
-    type Error: From<PathError>;
+    /// The error type for fallible operations. Must be convertible from [`PathError<Self::Scalar>`].
+    type Error: From<PathError<Self::Scalar>>;
 
     /// Total arc-length of the path.
     fn length(&self) -> Self::Scalar;
