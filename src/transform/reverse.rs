@@ -4,9 +4,7 @@
 //! delegates to `inner.sample_at(length - s)`. Tangent vectors are negated
 //! and (signed) curvature is negated.
 
-use num_traits::NumCast;
-
-use crate::{Curved, Path, Point, Tangent};
+use crate::{Curved, Path, Point, Scalar, Tangent};
 
 /// A path traversed in the opposite direction.
 ///
@@ -41,7 +39,7 @@ impl<P: Path> Path for Reverse<P> {
 impl<P: Tangent> Tangent for Reverse<P> {
     fn tangent_at(&self, s: Self::Scalar) -> Result<<Self::Point as Point>::Vector, Self::Error> {
         let t = self.inner.tangent_at(self.inner.length() - s)?;
-        let neg_one = <P::Scalar as NumCast>::from(-1.0).unwrap();
+        let neg_one = P::Scalar::zero() - P::Scalar::one();
         Ok(t * neg_one)
     }
 }

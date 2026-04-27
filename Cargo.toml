@@ -10,8 +10,9 @@ categories = ["mathematics", "science::robotics", "no-std"]
 keywords = ["path", "curve", "geometry", "planning", "trait"]
 
 [features]
-default = ["std"]
+default = ["std", "num-traits"]
 std     = []
+num-traits = ["dep:num-traits"]
 
 [dependencies]
-num-traits = { version = "0.2", default-features = false, features = ["libm"] }
+num-traits = { version = "0.2", default-features = false, optional = true }

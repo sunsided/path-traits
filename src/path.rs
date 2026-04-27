@@ -7,8 +7,6 @@
 //! - [`ParametricPath`] - extends [`Path`] with normalized-parameter sampling
 //!   `sample_t(t) ∈ [0, 1]`, plus conversion helpers `t_to_s` / `s_to_t`.
 
-use num_traits::Zero;
-
 use crate::PathError;
 use crate::Point;
 use crate::Scalar;

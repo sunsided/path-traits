@@ -4,9 +4,7 @@
 //! distance. Requires the inner path to implement
 //! [`Tangent`](crate::Tangent) and [`Heading`](crate::Heading).
 
-use num_traits::NumCast;
-
-use crate::{Heading, Path, Point, Scalar, Tangent};
+use crate::{Heading, Path, Point, Tangent};
 
 /// A path displaced by a constant distance from the original.
 ///
@@ -32,11 +30,7 @@ impl<P, S> Offset<P, S> {
     }
 }
 
-impl<P: Path + Tangent + Heading, S: Scalar> Path for Offset<P, S>
-where
-    P::Scalar: From<S>,
-    <P::Point as Point>::Vector: core::ops::Mul<P::Scalar, Output = <P::Point as Point>::Vector>,
-{
+impl<P: Path + Tangent + Heading> Path for Offset<P, P::Scalar> {
     type Scalar = P::Scalar;
     type Point = P::Point;
     type Error = P::Error;
@@ -48,8 +42,7 @@ where
     fn sample_at(&self, s: Self::Scalar) -> Result<Self::Point, Self::Error> {
         let pos = self.inner.sample_at(s)?;
         let tan = self.inner.tangent_at(s)?;
-        let d = <P::Scalar as NumCast>::from(self.distance).unwrap();
-        let offset_vec = tan * d;
+        let offset_vec = tan * self.distance;
         Ok(pos.translate(offset_vec))
     }
 }

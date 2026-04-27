@@ -21,6 +21,9 @@
 //!
 //! - `std` (default) - enables `std`-specific integrations. The core traits work
 //!   without `std`; `core::error::Error` is available via Rust edition 2024.
+//! - `num-traits` (default) - enables `num-traits` as the scalar backend. When
+//!   disabled with `std`, manual `Scalar` impls for `f32`/`f64` are provided.
+//!   Disabling both `num-traits` and `std` is a compile error.
 //!
 //! # What's available
 //!
@@ -33,6 +36,12 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
+
+#[cfg(all(not(feature = "num-traits"), not(feature = "std")))]
+compile_error!(
+    "path-traits requires either `num-traits` or `std` feature. \
+     Enable `num-traits` (default), or enable `std` for manual f32/f64 impls."
+);
 
 mod differential;
 mod error;

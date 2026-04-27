@@ -6,9 +6,7 @@
 //! - [`n_samples`] - samples at `n` evenly-spaced arc-length positions
 //! - [`uniform_t`] - samples at `n` evenly-spaced normalized-parameter values
 
-use num_traits::{NumCast, One, Zero};
-
-use crate::{ParametricPath, Path};
+use crate::{ParametricPath, Path, Scalar};
 
 /// Sample a path at equidistant arc-length intervals.
 ///
@@ -43,7 +41,7 @@ pub fn n_samples<P: Path>(
     let length = path.length();
     let zero = P::Scalar::zero();
     let one = P::Scalar::one();
-    let n_scalar = NumCast::from(n).unwrap_or(one);
+    let n_scalar = P::Scalar::from_usize(n);
     let step = if n > 1 {
         length / (n_scalar - one)
     } else {
@@ -53,7 +51,7 @@ pub fn n_samples<P: Path>(
         let s = if n == 1 {
             zero
         } else {
-            <P::Scalar as NumCast>::from(i).unwrap() * step
+            P::Scalar::from_usize(i) * step
         };
         path.sample_at(s)
     })
@@ -69,13 +67,13 @@ pub fn uniform_t<P: ParametricPath>(
 ) -> impl Iterator<Item = Result<P::Point, P::Error>> + '_ {
     let zero = P::Scalar::zero();
     let one = P::Scalar::one();
-    let n_scalar = NumCast::from(n).unwrap_or(one);
+    let n_scalar = P::Scalar::from_usize(n);
     let dt = if n > 1 { one / (n_scalar - one) } else { zero };
     (0..n).map(move |i| {
         let t = if n == 1 {
             zero
         } else {
-            <P::Scalar as NumCast>::from(i).unwrap() * dt
+            P::Scalar::from_usize(i) * dt
         };
         path.sample_t(t)
     })
