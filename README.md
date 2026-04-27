@@ -43,7 +43,7 @@ cargo add path-traits --features "std num-traits"
 - [`Scalar`], [`Point`], [`Vector`] — numeric and geometric primitives.
 - [`Path`], [`ParametricPath`] — sample curves by arc-length or normalized parameter.
 - [`PathSegment`], [`SegmentedPath`] — work with multi-segment paths like polylines.
-- [`Tangent`], [`Heading`], [`Curved`], [`FrenetFrame`] — differential geometry queries.
+- [`Tangent`], [`Heading`], [`Curved`], [`FrenetFrame`], [`BishopFrame`] — differential geometry queries.
 - [`Project`] — closest-point projection onto a path.
 - [`PathExt`] + [`Reverse`], [`Concat`], [`Offset`] — composable path adapters.
 - Free helpers: [`equidistant`], [`n_samples`], [`uniform_t`].
@@ -60,6 +60,7 @@ cargo add path-traits --features "std num-traits"
 [`Heading`]: https://docs.rs/path-traits/latest/path_traits/trait.Heading.html
 [`Curved`]: https://docs.rs/path-traits/latest/path_traits/trait.Curved.html
 [`FrenetFrame`]: https://docs.rs/path-traits/latest/path_traits/trait.FrenetFrame.html
+[`BishopFrame`]: https://docs.rs/path-traits/latest/path_traits/trait.BishopFrame.html
 [`Project`]: https://docs.rs/path-traits/latest/path_traits/trait.Project.html
 [`PathExt`]: https://docs.rs/path-traits/latest/path_traits/trait.PathExt.html
 [`Reverse`]: https://docs.rs/path-traits/latest/path_traits/struct.Reverse.html
@@ -303,6 +304,27 @@ Returns radians, using the `atan2(y, x)` convention (counter-clockwise from the 
 
 **Required method:**
 - `frame_at(&self, s) -> Result<Self::Frame, Self::Error>`
+
+### BishopFrame (advanced, 3D)
+
+[`BishopFrame`] provides a rotation-minimizing frame stream. Unlike [`FrenetFrame`], which is a local, pointwise query, Bishop frames are path-dependent: they require an explicit seed frame and produce an ordered sequence of frames at monotonically increasing arc-length samples.
+
+**Bounds:** `Tangent`.
+
+**Required associated types:**
+- `type Frame` — e.g. `(T, M1, M2)` in 3D.
+- `type Seed` — the initial frame or "up" hint that disambiguates the family of rotation-minimizing frames.
+
+**Required method:**
+- `bishop_frames(&self, seed, samples) -> impl Iterator<Item = Result<Self::Frame, Self::Error>>`
+
+**Key differences from Frenet frames:**
+- Defined wherever the tangent exists — no breakdown at zero curvature.
+- No discontinuous frame flip at inflection points.
+- Path-dependent: the same `s` yields different frames under different seeds.
+- Requires monotonic sample ordering for efficient integration.
+
+In 2D, a rotation-minimizing frame collapses to `(T, N)` and adds nothing beyond [`Tangent`]. This trait is primarily useful for 3D paths.
 
 ### Project
 

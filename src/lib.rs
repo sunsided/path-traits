@@ -34,7 +34,7 @@
 //! - [`Scalar`], [`Point`], [`Vector`] - numeric and geometric primitives
 //! - [`Path`], [`ParametricPath`] - sample curves by arc-length or normalized parameter
 //! - [`PathSegment`], [`SegmentedPath`] - work with multi-segment paths like polylines
-//! - [`Tangent`], [`Heading`], [`Curved`], [`FrenetFrame`] - differential geometry queries
+//! - [`Tangent`], [`Heading`], [`Curved`], [`FrenetFrame`], [`BishopFrame`] - differential geometry queries
 //! - [`Project`] - closest-point projection onto a path
 //! - [`PathExt`] - chainable adapters: [`Reverse`], [`Concat`], [`Offset`]
 
