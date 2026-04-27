@@ -11,7 +11,13 @@ keywords = ["path", "curve", "geometry", "planning", "trait"]
 
 [features]
 default    = []
+## Enables `std`-specific integrations. The core traits work without
+## `std`; `core::error::Error` is available via Rust edition 2024. When
+## combined with `num-traits`, forwards `std` to that crate for the full
+## `Float` trait (instead of `FloatCore`).
 std        = ["num-traits?/std"]
+## uses `num-traits` as the `Scalar` backend. Without `std`,
+## `Scalar` is bounded by `FloatCore`; with `std`, it is bounded by `Float`.
 num-traits = ["dep:num-traits"]
 
 [dependencies]

@@ -19,11 +19,11 @@
 //!
 //! # Crate features
 //!
-//! - `std` — enables `std`-specific integrations. The core traits work without
+//! - `std` - enables `std`-specific integrations. The core traits work without
 //!   `std`; `core::error::Error` is available via Rust edition 2024. When
 //!   combined with `num-traits`, forwards `std` to that crate for the full
 //!   `Float` trait (instead of `FloatCore`).
-//! - `num-traits` — uses `num-traits` as the [`Scalar`] backend. Without `std`,
+//! - `num-traits` - uses `num-traits` as the [`Scalar`] backend. Without `std`,
 //!   [`Scalar`] is bounded by `FloatCore`; with `std`, it is bounded by `Float`.
 //!
 //! The default build is `no_std` with zero external dependencies, providing
