@@ -1,10 +1,10 @@
-//! Core path traits.
+//! Core traits for parametric curves.
 //!
 //! This module defines the two foundational traits of the crate:
 //!
-//! - [`Path`] — the core trait for arc-length-parameterized curves. It requires
+//! - [`Path`] - the core trait for arc-length-parameterized curves. It requires
 //!   `length()`, `sample_at(s)`, and provides `start()`, `end()`, `domain()`.
-//! - [`ParametricPath`] — extends [`Path`] with normalized-parameter sampling
+//! - [`ParametricPath`] - extends [`Path`] with normalized-parameter sampling
 //!   `sample_t(t) ∈ [0, 1]`, plus conversion helpers `t_to_s` / `s_to_t`.
 
 use num_traits::Zero;
@@ -13,7 +13,7 @@ use crate::PathError;
 use crate::Point;
 use crate::Scalar;
 
-/// A parametric path that can be sampled by arc-length `s`.
+/// A curve that can be sampled by arc-length `s`.
 ///
 /// Every path has a total `length`, and `sample_at(s)` returns a [`Point`](crate::Point)
 /// for `s ∈ [0, length]`. The trait provides convenience methods `start()`, `end()`,
@@ -50,7 +50,7 @@ pub trait Path {
     }
 }
 
-/// A path that supports sampling by a normalized parameter `t ∈ [0, 1]`.
+/// A curve that also supports sampling by a normalized parameter `t ∈ [0, 1]`.
 ///
 /// Extends [`Path`] with `sample_t(t)`. Default implementations of `t_to_s` and
 /// `s_to_t` use linear conversion (`s = t * length`), which is exact only for

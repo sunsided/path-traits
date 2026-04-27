@@ -1,13 +1,14 @@
-//! Concatenation path adapter.
+//! Join two paths end-to-end.
 //!
-//! [`Concat`] joins two compatible paths end-to-end. The combined length is the
-//! sum of the inner lengths, and sampling delegates to the appropriate segment.
-//! When both inner paths are [`SegmentedPath`](crate::SegmentedPath), the
-//! concatenation is itself a [`SegmentedPath`](crate::SegmentedPath).
+//! [`Concat`] connects two compatible paths into a single continuous path.
+//! The combined length is the sum of the inner lengths, and sampling delegates
+//! to the appropriate segment. When both inner paths are
+//! [`SegmentedPath`](crate::SegmentedPath), the concatenation is itself a
+//! [`SegmentedPath`](crate::SegmentedPath).
 
 use crate::{Path, PathSegment, SegmentedPath};
 
-/// A path adapter that concatenates two paths end-to-end.
+/// Two paths joined end-to-end into a single continuous path.
 ///
 /// The combined path has length `first.length() + second.length()`. Sampling
 /// below `first.length()` delegates to the first path; the remainder delegates
@@ -20,7 +21,7 @@ pub struct Concat<A, B> {
 }
 
 impl<A, B> Concat<A, B> {
-    /// Create a new concatenated path adapter.
+    /// Create a new concatenated path.
     pub fn new(first: A, second: B) -> Self {
         Self { first, second }
     }

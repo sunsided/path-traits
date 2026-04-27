@@ -1,22 +1,21 @@
-//! Segmentation traits.
+//! Working with multi-segment paths.
 //!
 //! This module provides:
 //!
-//! - [`PathSegment`] — a marker trait indicating a path is a primitive that is
-//!   not further segmented.
-//! - [`SegmentedPath`] — a path composed of multiple segments, offering
-//!   enumeration, indexing, and arc-length-to-segment location.
+//! - [`PathSegment`] - a marker for a primitive curve that is not further subdivided
+//! - [`SegmentedPath`] - a path composed of multiple segments, offering
+//!   enumeration, indexing, and arc-length-to-segment location
 
 use crate::Path;
 
-/// Marker trait for a path primitive that is not further segmented.
+/// Marker for a primitive curve that cannot be further subdivided.
 ///
 /// Types implementing this trait represent atomic path building blocks (e.g. a
 /// line segment, a Bézier curve). They behave exactly like a [`Path`] but signal
 /// to [`SegmentedPath`] consumers that no further subdivision is expected.
 pub trait PathSegment: Path {}
 
-/// A path composed of multiple [`PathSegment`]s.
+/// A path made up of multiple [`PathSegment`]s.
 ///
 /// Provides methods to enumerate segments, access them by index, and map a
 /// global arc-length parameter to a `(segment_index, local_s)` pair.

@@ -1,10 +1,10 @@
-//! Point and vector traits.
+//! Points and vectors for geometric computations.
 //!
 //! This module defines the foundational geometric primitives:
 //!
-//! - [`Vector`] — a type in a linear (vector) space with algebraic operations
+//! - [`Vector`] - a type in a linear (vector) space with algebraic operations
 //!   (`Add`, `Sub`, `Mul` by scalar) plus `dot` and `norm`.
-//! - [`Point`] — a type in an affine space with `displacement` (→ [`Vector`]) and
+//! - [`Point`] - a type in an affine space with `displacement` (→ [`Vector`]) and
 //!   `translate` (← [`Vector`]), plus a default `distance` implementation.
 //!
 //! Points and vectors are kept distinct because a position on a path is a point,
@@ -12,7 +12,7 @@
 
 use crate::Scalar;
 
-/// A vector in Euclidean space with basic algebraic operations.
+/// A displacement or derivative in Euclidean space.
 ///
 /// Vectors represent displacements and derivatives (e.g. tangent vectors).
 /// They form a linear space: addition, subtraction, and scalar multiplication
@@ -36,7 +36,7 @@ pub trait Vector:
     fn norm(self) -> Self::Scalar;
 }
 
-/// A point in an affine space, parameterized by its scalar and vector types.
+/// A position in an affine space, parameterized by its scalar and vector types.
 ///
 /// Points represent positions. They cannot be added, but a displacement from one
 /// point to another yields a [`Vector`], and translating a point by a [`Vector`]

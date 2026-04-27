@@ -1,11 +1,10 @@
-//! Sampling functions.
+//! Evenly-spaced path sampling.
 //!
-//! This module provides free functions for sampling paths at evenly-spaced
-//! positions:
+//! Free functions for generating sample points along a path:
 //!
-//! - [`equidistant`] — samples at fixed arc-length steps
-//! - [`n_samples`] — samples at `n` evenly-spaced arc-length positions
-//! - [`uniform_t`] — samples at `n` evenly-spaced normalized-parameter values
+//! - [`equidistant`] - samples at fixed arc-length steps
+//! - [`n_samples`] - samples at `n` evenly-spaced arc-length positions
+//! - [`uniform_t`] - samples at `n` evenly-spaced normalized-parameter values
 
 use num_traits::{NumCast, One, Zero};
 

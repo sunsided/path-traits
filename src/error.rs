@@ -1,4 +1,4 @@
-//! Path error types.
+//! Error types for path operations.
 //!
 //! This module defines [`PathError`], the canonical error enum for all path-related
 //! fallible operations. Every trait in the hierarchy exposes

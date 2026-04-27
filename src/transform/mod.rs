@@ -1,14 +1,13 @@
-//! Path transform adapters.
+//! Path composition and transformation.
 //!
-//! This module provides wrapper types that adapt a path's behaviour while
-//! reusing the trait machinery:
+//! Build new paths from existing ones without modifying the original data:
 //!
-//! - [`Reverse`] — reverses the direction of the inner path
-//! - [`Concat`] — joins two paths end-to-end
-//! - [`Offset`] — offsets the path by a constant distance
+//! - [`Reverse`] - traverse a path backwards
+//! - [`Concat`] - join two paths end-to-end
+//! - [`Offset`] - displace a path by a constant distance
 //!
-//! The [`PathExt`] extension trait glues these adapters into method-style
-//! calls on any type implementing [`Path`](crate::Path).
+//! The [`PathExt`] extension trait provides ergonomic `.reverse()`, `.concat()`,
+//! and `.offset()` methods on any type implementing [`Path`](crate::Path).
 
 mod concat;
 mod offset;
@@ -20,9 +19,9 @@ pub use reverse::Reverse;
 
 use crate::{Heading, Path, Tangent};
 
-/// Extension trait for path adapters.
+/// Ergonomic methods for path composition and transformation.
 ///
-/// Provides ergonomic `reverse()`, `concat()`, and `offset()` methods on any
+/// Provides `.reverse()`, `.concat()`, and `.offset()` methods on any
 /// type implementing [`Path`] (with additional bounds where required).
 pub trait PathExt: Path + Sized {
     /// Reverse the path direction.

@@ -1,4 +1,4 @@
-//! Numeric scalar type alias.
+//! Scalar type alias for arc-length and parameter computations.
 //!
 //! This module defines the [`Scalar`] trait, a marker alias over `num_traits::Float`
 //! with additional bounds (`Debug`, `Copy`, `'static`) required for arc-length and
@@ -13,5 +13,5 @@ use num_traits::Float;
 /// (e.g. `f32`, `f64`).
 pub trait Scalar: Float + core::fmt::Debug + Copy + 'static {}
 
-/// Blanket implementation of [`Scalar`] for any type that satisfies the required bounds.
+/// Blanket implementation for any type satisfying the required bounds.
 impl<T: Float + core::fmt::Debug + Copy + 'static> Scalar for T {}

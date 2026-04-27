@@ -1,16 +1,16 @@
-//! Closest-point projection trait.
+//! Closest-point projection onto a path.
 //!
-//! This module defines the [`Project`] trait, which finds the arc-length of the
-//! point on a path closest to a given query point, along with a convenience
-//! method `closest_point` that returns the actual point.
+//! This module defines the [`Project`] trait for finding the arc-length of the
+//! point on a path nearest to a given query point, along with a convenience
+//! method `closest_point` that returns the actual position.
 
 use crate::Path;
 
-/// Find the closest point on a path to a given query point.
+/// Project a query point onto a path to find the nearest position.
 ///
-/// Implementers should project the query point onto the path and return the
-/// corresponding arc-length parameter. The default `closest_point` method
-/// combines `project` with `sample_at` to produce the actual closest position.
+/// Implementers should return the arc-length parameter of the closest point.
+/// The default `closest_point` method combines `project` with `sample_at` to
+/// produce the actual position.
 pub trait Project: Path {
     /// Find the arc-length `s` of the point on the path closest to `p`.
     ///

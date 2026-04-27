@@ -1,4 +1,11 @@
-//! Tower-like trait hierarchy for parametric paths, segments, and geometric queries.
+//! Composable traits for working with parametric curves and geometric queries.
+//!
+//! This crate provides a unified interface for sampling paths by arc-length,
+//! querying differential properties (tangents, curvature, heading), projecting
+//! points onto curves, and composing paths through reversal, concatenation, and
+//! offsetting. The trait design is inspired by Tower's layered approach, but the
+//! focus here is on making geometric queries ergonomic and reusable across any
+//! curve representation.
 //!
 //! # Quick example
 //!
@@ -12,17 +19,17 @@
 //!
 //! # Crate features
 //!
-//! - `std` (default) — enables `std`-specific integrations. The core traits work
+//! - `std` (default) - enables `std`-specific integrations. The core traits work
 //!   without `std`; `core::error::Error` is available via Rust edition 2024.
 //!
-//! # Trait hierarchy
+//! # What's available
 //!
-//! - [`Scalar`], [`Point`], [`Vector`] — numeric and geometric primitives
-//! - [`Path`], [`ParametricPath`] — core sampling traits
-//! - [`PathSegment`], [`SegmentedPath`] — multi-segment enumeration
-//! - [`Tangent`], [`Heading`], [`Curved`], [`FrenetFrame`] — differential geometry
-//! - [`Project`] — closest-point projection
-//! - [`PathExt`] — adapters: [`Reverse`], [`Concat`], [`Offset`]
+//! - [`Scalar`], [`Point`], [`Vector`] - numeric and geometric primitives
+//! - [`Path`], [`ParametricPath`] - sample curves by arc-length or normalized parameter
+//! - [`PathSegment`], [`SegmentedPath`] - work with multi-segment paths like polylines
+//! - [`Tangent`], [`Heading`], [`Curved`], [`FrenetFrame`] - differential geometry queries
+//! - [`Project`] - closest-point projection onto a path
+//! - [`PathExt`] - chainable adapters: [`Reverse`], [`Concat`], [`Offset`]
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]

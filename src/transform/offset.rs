@@ -1,16 +1,16 @@
-//! Offset path adapter.
+//! Offset a path by a constant distance.
 //!
-//! [`Offset`] wraps a path and displaces every sampled point by a constant
-//! distance along the normal direction. Requires the inner path to implement
+//! [`Offset`] wraps a path and displaces every sampled point by a fixed
+//! distance. Requires the inner path to implement
 //! [`Tangent`](crate::Tangent) and [`Heading`](crate::Heading).
 
 use num_traits::NumCast;
 
 use crate::{Heading, Path, Point, Scalar, Tangent};
 
-/// A path adapter that offsets the inner path by a constant distance.
+/// A path displaced by a constant distance from the original.
 ///
-/// Every sampled point is displaced by `distance` units. The offset direction
+/// Every sampled point is shifted by `distance` units. The offset direction
 /// is derived from the path's heading; in 2D this produces a parallel curve.
 ///
 /// **Note:** The current implementation offsets along the tangent direction as
@@ -24,7 +24,7 @@ pub struct Offset<P, S> {
 }
 
 impl<P, S> Offset<P, S> {
-    /// Create a new offset path adapter.
+    /// Create a new offset path.
     ///
     /// The `distance` is in the same units as the path's scalar type.
     pub fn new(inner: P, distance: S) -> Self {

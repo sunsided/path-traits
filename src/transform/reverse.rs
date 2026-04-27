@@ -1,6 +1,6 @@
-//! Reverse path adapter.
+//! Traverse a path in the reverse direction.
 //!
-//! [`Reverse`] wraps an inner path and samples it in reverse: `sample_at(s)`
+//! [`Reverse`] wraps a path and samples it backwards: `sample_at(s)`
 //! delegates to `inner.sample_at(length - s)`. Tangent vectors are negated
 //! and (signed) curvature is negated.
 
@@ -8,7 +8,7 @@ use num_traits::NumCast;
 
 use crate::{Curved, Path, Point, Tangent};
 
-/// A path adapter that reverses the direction of an inner path.
+/// A path traversed in the opposite direction.
 ///
 /// Sampling at arc-length `s` returns the position the inner path would have
 /// at `length - s`. Tangent vectors are negated; signed curvature is negated.
@@ -18,7 +18,7 @@ pub struct Reverse<P> {
 }
 
 impl<P> Reverse<P> {
-    /// Create a new reversed path adapter.
+    /// Create a new reversed path.
     pub fn new(inner: P) -> Self {
         Self { inner }
     }
