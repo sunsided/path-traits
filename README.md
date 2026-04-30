@@ -307,7 +307,7 @@ Returns radians, using the `atan2(y, x)` convention (counter-clockwise from the 
 
 ### BishopFrame (advanced, 3D)
 
-[`BishopFrame`] provides a rotation-minimizing frame stream. Unlike [`FrenetFrame`], which is a local, pointwise query, Bishop frames are path-dependent: they require an explicit seed frame and produce an ordered sequence of frames at monotonically increasing arc-length samples.
+[`BishopFrame`] provides a rotation-minimizing frame stream. Unlike [`FrenetFrame`], which is a local, pointwise query, Bishop frames are path-dependent: they require an explicit seed frame and produce an ordered sequence of frames at monotonically non-decreasing arc-length samples.
 
 **Bounds:** `Tangent`.
 

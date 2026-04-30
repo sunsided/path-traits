@@ -93,8 +93,8 @@ pub trait FrenetFrame: Tangent + Curved {
 ///
 /// The `samples` iterator **must** produce monotonically non-decreasing
 /// arc-length values. Violating this precondition is a caller error;
-/// implementations may return [`PathError::not_differentiable`] or
-/// [`PathError::OutOfDomain`] for out-of-order samples.
+/// implementations may return [`crate::PathError::not_differentiable`] or
+/// [`crate::PathError::OutOfDomain`] for out-of-order samples.
 ///
 /// # Two-dimensional paths
 ///
@@ -117,9 +117,10 @@ pub trait BishopFrame: Tangent {
     ///
     /// # Arguments
     ///
-    /// * `seed` — the initial frame at `samples[0]`, which determines the
+    /// * `seed` — the initial frame at the first sample, which determines the
     ///   roll angle of the entire frame sequence.
     /// * `samples` — arc-length values in monotonically non-decreasing order.
+    ///   If `samples` is empty, the returned iterator yields no frames.
     ///
     /// # Errors
     ///
@@ -136,11 +137,11 @@ pub trait BishopFrame: Tangent {
     ///     .bishop_frames(seed, equidistant(&path, 0.1))
     ///     .collect::<Result<Vec<_>, _>>()?;
     /// ```
-    fn bishop_frames<'a, I>(
-        &'a self,
+    fn bishop_frames<I>(
+        &self,
         seed: Self::Seed,
         samples: I,
-    ) -> impl Iterator<Item = Result<Self::Frame, Self::Error>> + 'a
+    ) -> impl Iterator<Item = Result<Self::Frame, Self::Error>> + '_
     where
-        I: IntoIterator<Item = Self::Scalar> + 'a;
+        I: IntoIterator<Item = Self::Scalar>;
 }
