@@ -124,9 +124,10 @@ pub trait BishopFrame: Tangent {
     ///
     /// # Errors
     ///
-    /// Returns an error when any sample is outside the path domain, or when
-    /// the samples are not monotonically non-decreasing (caller precondition
-    /// violation).
+    /// Returns an error when any sample is outside the path domain.
+    /// Supplying samples that are not monotonically non-decreasing is a
+    /// caller precondition violation; behavior in that case is unspecified,
+    /// and implementations may return an error.
     ///
     /// # Example (schematic)
     ///
